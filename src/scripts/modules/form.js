@@ -11,6 +11,8 @@ class Form extends THREE.Object3D {
 		this.radius = opt.radius || 100;
 		this.formColor = '#111111';
 		this.form = 'Sphere';
+		this.noiseSpeed = 1.0;
+		this.noiseSize = 1.0;
 
 		// material
 		this.material = new THREE.RawShaderMaterial({
@@ -18,7 +20,9 @@ class Form extends THREE.Object3D {
 			fragmentShader: glslify('../../shaders/fx.frag'),
 			uniforms: {
 				color: { type: 'c', value: new THREE.Color(this.formColor) },
-				iGlobalTime: { type: 'f', value: 0.0 }
+				iGlobalTime: { type: 'f', value: 0.0 },
+				noiseSpeed: { type: 'f', value: this.noiseSpeed },
+				noiseSize: { type: 'f', value: this.noiseSize }
 			},
 			transparent: true,
 			depthTest: false
@@ -62,11 +66,16 @@ class Form extends THREE.Object3D {
 			this.material.uniforms.color.value = new THREE.Color(this.formColor);
 		});
 
+		window.gui.add(this, 'noiseSpeed', 1.0, 10.0 );
+		window.gui.add(this, 'noiseSize', 0.0, 1.0 );
+
 	}
 
 	update() {
 
 		this.material.uniforms.iGlobalTime.value += 0.01;
+		this.material.uniforms.noiseSpeed.value = this.noiseSpeed;
+		this.material.uniforms.noiseSize.value = this.noiseSize;
 
 	}
 	

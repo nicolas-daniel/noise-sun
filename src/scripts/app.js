@@ -1,9 +1,8 @@
 import Sun from './modules/sun';
 import Form from './modules/form';
 
-WAGNER.vertexShadersPath = '/shaders/vertex-shaders';
-WAGNER.fragmentShadersPath = '/shaders/fragment-shaders';
-WAGNER.assetsPath = '/assets/';
+WAGNER.vertexShadersPath = '/Wagner/vertex-shaders';
+WAGNER.fragmentShadersPath = '/Wagner/fragment-shaders';
 
 class App {
 	

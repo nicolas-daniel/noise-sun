@@ -29,4 +29,8 @@ gulp.task('watch', function() {
 		gulp.start('shaders');
 	});
 
+	watch(config.wagner.src, function() {
+		gulp.start('wagner');
+	});
+
 });

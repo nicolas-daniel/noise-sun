@@ -27,6 +27,10 @@ module.exports = {
 		src: './src/shaders/**/*',
 		dest: dest + '/shaders'
 	},
+	wagner: {
+		src: './src/Wagner/**/*',
+		dest: dest + '/Wagner'
+	},
 	browserSync: {
 		dest: dest
 	},

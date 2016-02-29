@@ -137,7 +137,11 @@ class App {
 		
 		this.composer.toScreen();
 
-		this.bloomPass.params.zoomBlurStrength = .2 + this.soundManager.drum * 0.6;
+		if (this.soundManager.pause) {
+			this.bloomPass.params.zoomBlurStrength = .3;
+		} else {
+			this.bloomPass.params.zoomBlurStrength = .2 + this.soundManager.drum * 0.6;
+		}
 
 		if (this.autoRotate) {
 			this.scene.rotation.x += 0.002;

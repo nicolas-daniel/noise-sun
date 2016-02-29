@@ -1,6 +1,10 @@
+const soundcloud = require('soundcloud-badge');
 const createPlayer = require('web-audio-player');
 const createAnalyser = require('web-audio-analyser');
 const average = require('analyser-frequency-average');
+
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioContext = AudioContext ? new AudioContext() : null;
 
 class SoundManager {
 
@@ -25,11 +29,6 @@ class SoundManager {
 
 		this.soundGui = window.gui.addFolder('Sound');
 		
-		let source = this.soundGui.add(this, 'source', [ 'mome.mp3','the-presets-ghosts.mp3','bluejean_short.mp3' ] );
-		source.onChange((src) => {
-			this.initSound();
-		});
-		
 		let pause = this.soundGui.add(this, 'pause');
 		pause.onChange(() => {
 			if (this.pause) this.player.pause();
@@ -40,35 +39,35 @@ class SoundManager {
 
 	initSound () {
 
-		// reset player
-		if (this.player) {
-			this.player.stop()
-			this.player = null;
-		}
-
-		this.player = createPlayer( this.assets + this.source, { loop:true });
-		this.audioUtil = createAnalyser( this.player.node, this.player.context, { stereo: false });
-		this.analyser = this.audioUtil.analyser;
-
-		this.player.on('load', () => {
-
-			console.log('SoundManager :: Source:', this.player.element ? 'MediaElement' : 'Buffer')
-			console.log('SoundManager :: Playing', Math.round(this.player.duration) + 's of audio...')
-
-			this.player.play()
-
-		}.bind(this));
+		soundcloud({
+			client_id: 'b95f61a90da961736c03f659c03cb0cc',
+			song: 'https://soundcloud.com/flume/insane-feat-moon-holiday',
+			dark: false,
+			getFonts: true
+		}, (err, src, data, div) => {
+			if (err) throw err;
+			this.player = new Audio();
+			this.player.crossOrigin = 'Anonymous';
+			this.player.addEventListener('canplay', () => {
+				this.audioUtil = createAnalyser(this.player, audioContext, { audible: true, stereo: false })
+				this.analyser = this.audioUtil.analyser;
+				this.player.play();
+			});
+			this.player.src = src;
+		});
 
 	}
 
 	update () {
 
-		this.freqs = this.audioUtil.frequencies();
+		if (this.audioUtil) {
+			this.freqs = this.audioUtil.frequencies();
 
-		this.bass = average(this.analyser, this.freqs, 40, 200);
-		this.midBass = average(this.analyser, this.freqs, 200, 600);
-		this.voice = average(this.analyser, this.freqs, 600, 2000 );
-		this.drum = average(this.analyser, this.freqs, 2000, 16000 );
+			this.bass = average(this.analyser, this.freqs, 40, 200);
+			this.midBass = average(this.analyser, this.freqs, 200, 600);
+			this.voice = average(this.analyser, this.freqs, 600, 2000 );
+			this.drum = average(this.analyser, this.freqs, 2000, 16000 );
+		}
 
 	}
 

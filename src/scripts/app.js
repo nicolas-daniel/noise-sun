@@ -1,3 +1,4 @@
+import SoundManager from './managers/soundManager';
 import Sun from './modules/sun';
 import Form from './modules/form';
 
@@ -13,7 +14,7 @@ class App {
 		this.animate = this.animate.bind(this);
 
 		// params
-		this.bgColor = 0x1a1a1a;
+		this.backgroundColor = 0x1a1a1a;
 		this.wWidth = window.innerWidth;
 		this.wHeight = window.innerHeight;
 		this.useNoise = true;
@@ -55,10 +56,10 @@ class App {
 	init() {
 
 		this.scene = new THREE.Scene();
-		// this.scene.fog = new THREE.Fog( this.bgColor, 0.1, 1000 );
+		// this.scene.fog = new THREE.Fog( this.backgroundColor, 0.1, 1000 );
 
 		this.renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
-		this.renderer.setClearColor(this.bgColor, 1);
+		this.renderer.setClearColor(this.backgroundColor, 1);
 		this.renderer.autoClearColor = true;
 		
 		this.camera = new THREE.PerspectiveCamera(45, this.wWidth/this.wHeight, 1, 2000);
@@ -84,6 +85,8 @@ class App {
 
 		this.scene.add( this.sun );
 		this.scene.add( this.form );
+
+		this.soundManager = new SoundManager();
 
 		this.update();
 		
@@ -133,7 +136,9 @@ class App {
 		if (this.useBloom) this.composer.pass( this.bloomPass );
 		
 		this.composer.toScreen();
-		
+
+		this.bloomPass.params.zoomBlurStrength = .2 + this.soundManager.drum * 0.6;
+
 		if (this.autoRotate) {
 			this.scene.rotation.x += 0.002;
 			this.scene.rotation.y += 0.002;
@@ -141,6 +146,7 @@ class App {
 		}
 
 		this.form.update();
+		this.soundManager.update();
 
 	}
 
